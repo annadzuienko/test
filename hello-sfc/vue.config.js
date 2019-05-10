@@ -1,3 +1,3 @@
 module.exports = {
-  baseUrl: process.env.NODE_ENV === 'production' ? './dist/': '/',
+  baseUrl: process.env.NODE_ENV === 'production' ? '/test/dist/': '/',
 };
