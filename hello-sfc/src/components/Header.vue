@@ -1,3 +1,3 @@
 <template>
-    <header>Films 2018</header>
+    <header>Films</header>
 </template>
