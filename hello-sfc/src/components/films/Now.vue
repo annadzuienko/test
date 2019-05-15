@@ -1,12 +1,21 @@
 <template>
-  <v-layout row wrap>
-            <v-flex xs3 v-for="item in items" :key="item.id">
-      <v-card class="ma-3">
-        <v-img :src="`https://image.tmdb.org/t/p/h632/${item.poster_path}`"></v-img>
-        <v-card-title primary-title>
+  <v-layout wrap>
+    <v-flex xs3 xs4 xs6 xs12 sm4 md3 lg3 xl4 v-for="film in films" :key="film.id" v-if="film.release_date <= '2018-10-31'">
+      <v-card max-width="250" class="mx-2 my-2" >
+        <v-img max-height="250" max-width="250" :src="`https://image.tmdb.org/t/p/h632/${film.poster_path}`"></v-img>
+        <v-card-title>
           <div>
-            <h3 class="subheading mb-0">{{item.title}}</h3>
-            <span v-for="genre in item.genre_ids" :key="genre" class="mr-1">{{getGenerNameById(genre)}}</span>
+            <v-layout row>
+              <v-flex><h3 class="subheading font-weight-bold text-uppercase text-style">{{film.title}}</h3></v-flex>
+              <!-- <v-spacer></v-spacer> -->
+             <v-flex><div class="rating">{{film.vote_average}}</div></v-flex>
+            </v-layout>
+            <div class="text-style my-1">
+              <span v-for="genre in film.genre_ids" :key="genre"
+                class="mr-1 light-blue--text text--accent-3">
+                {{getGenreNameById(genre)}}
+              </span>
+            </div>
           </div>
         </v-card-title>
       </v-card>
@@ -17,13 +26,9 @@
 export default {
   data () {
     return {
-      items: null,
-      genres: [
-        // {id: 53, name: "Action"},
-        // {id: 878, name: "Horror"},
-        // {id: 18, name: "Dram"},
-        // {id: 27, name: "Fantazy"},
-      ]
+      films: [],
+      genres: [],
+      loading: false
     }
   },
   created() {
@@ -32,22 +37,25 @@ export default {
   },
   methods: {
     getData() {
+      this.loading = true;
       const axios = require('axios');
       axios
         .get('https://mate-academy.github.io/vue-program/data/movierise-data.json')
         .then(res => {
-          this.items = res.data.results;
-          this.items.map(i => {
+          this.films = res.data.results;
+          this.films.map(f => {
             return {
-              id: i.id,
-              title: i.title,
-              poster_path: i.poster_path,
-              vote_average: i.vote_average,
-              release_date: i.release_date,
-              genre_ids: i.genre_ids
+              id: f.id,
+              title: f.title,
+              poster_path: f.poster_path,
+              backdrop_path: f.backdrop_path,
+              vote_average: f.vote_average,
+              release_date: f.release_date,
+              genre_ids: f.genre_ids.splice(3)
             }
           });
         });
+        this.loading = false;
     },
     getGenre() {
       const axios = require('axios');
@@ -76,13 +84,12 @@ export default {
     //     });
     //   });
     // },
-    getGenerNameById(genre) {
-      // id = this.items.map(i => i.genre_ids.map(gi => gi));
+    getGenreNameById(genre) {
       let genreName = "";
-      if (this.genres.find(g => g.id === genre)) {
-        genreName = this.genres.find(g => g.name);
-      }
-      console.log(genreName);
+      this.genres.map(g => {
+          if(g.id === genre)
+            genreName = g.name;
+      });
       return genreName;
     }
   }
@@ -90,5 +97,18 @@ export default {
 </script>
 
 <style>
-
+ .text-style {
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   width: 50%;
+ }
+ .rating {
+   border: 1px solid #00B0FF;
+   border-radius: 3px;
+   width: 25px;
+   height: 18px;
+   text-align: center;
+   font-weight: bold;
+ }
 </style>
