@@ -23,8 +23,6 @@
                             <v-icon class="mr-2" color="light-blue accent-3">star</v-icon>
                             <v-icon class="mr-2" color="light-blue accent-3">star</v-icon>
                             <v-icon class="mr-2" color="light-blue accent-3">star</v-icon>
-                            <v-icon class="mr-2" color="light-blue accent-3">star</v-icon>
-                            <v-icon class="mr-2" color="light-blue accent-3">star</v-icon>
                             <div class="rating">{{items[8].vote_average}}</div>
                         </v-layout>
                     </v-flex>
