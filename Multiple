@@ -77,6 +77,9 @@ export default {
       showMultiple: false
     };
   },
+  created() {
+    this.value;
+  },
   // watch: {
   //   value: {
   //     handler(val) {
@@ -110,10 +113,16 @@ export default {
     },
     changeReference() {
       this.showMultiple = !this.showMultiple;
-      this.selectedItems.splice(0, this.selectedItems.length - 1);
-      this.selected = { ...this.value };
-      // id: this.value.id,
-      // title: this.value.title
+      this.selected = {
+        id: this.value.id,
+        title: this.value.title
+      };
+
+      if (this.showMultiple) {
+        this.selectedItems.splice(0, this.selectedItems.length - 1);
+      } else {
+        this.selectedItems.push(this.selected);
+      }
     }
   }
 };
