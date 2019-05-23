@@ -1,0 +1,126 @@
+<template>
+   <v-layout align-end>
+      <!-- v-if="!showMultiple" -->
+      <app-reference v-model="selected"
+       v-show="!showMultiple"
+       :label="label"
+       :resource="resource"
+       :disable-add="true"></app-reference>
+
+      <v-layout align-end
+       v-show="showMultiple">
+         <v-flex xs11>
+            <p class="body-1 font-weight-thin grey--text  text--grey-1 py-1 px-0 ma-0">{{label}}</p>
+            <v-layout wrap
+             class="box-chips">
+               <v-chip v-for="(selectedItem, id) in selectedItems"
+                :key="selectedItem.id"
+                close
+                @input="remove(selectedItem)">{{selectedItem.title}}</v-chip>
+            </v-layout>
+         </v-flex>
+         <v-flex xs1>
+            <v-menu v-model="menu"
+             :close-on-content-click="false"
+             :close-on-click="false"
+             :nudge-width="400"
+             offset-x>
+               <v-btn small
+                class="plus-button my-0"
+                slot="activator">
+                  <v-icon>add</v-icon>
+               </v-btn>
+               <v-card>
+                  <v-card-text>
+                     <app-reference v-model="selected"
+                      :resource="resource"
+                      :disable-add="true"
+                      :label="label">
+                     </app-reference>
+                  </v-card-text>
+                  <v-card-actions>
+                     <v-spacer></v-spacer>
+                     <v-btn small
+                      flat
+                      @click="close">Отмена</v-btn>
+                     <v-btn small
+                      color="primary"
+                      flat
+                      @click="add">Ок</v-btn>
+                  </v-card-actions>
+               </v-card>
+            </v-menu>
+         </v-flex>
+      </v-layout>
+      <v-tooltip top>
+         <v-btn slot="activator"
+          icon
+          small
+          class="mx-1 my-0"
+          @click="changeReference">
+            <!-- 'short_text' : 'view_agenda' -->
+            <v-icon small
+             color="grey">{{showMultiple ? 'crop_din' : 'filter_none' }}</v-icon>
+         </v-btn>
+         <span>{{showMultiple ? 'Одиночный выбор' : 'Множественный выбор'}}</span>
+      </v-tooltip>
+   </v-layout>
+</template>
+<script>
+export default {
+  props: ["label", "resource", "value"],
+  data() {
+    return {
+      menu: false,
+      selectedItems: [],
+      selected: this.value,
+      showMultiple: false
+    };
+  },
+  // watch: {
+  //   value: {
+  //     handler(val) {
+  //       if (val) {
+  //         this.selected = val;
+  //         this.selectedItems.push(val);
+  //       }
+  //     },
+  //     immediate: true
+  //   }
+  // },
+  methods: {
+    close() {
+      this.selected = false;
+      this.menu = false;
+    },
+    add() {
+      if (this.selectedItems.find(s => s.id === this.selected.id)) {
+        return;
+      }
+      this.selectedItems.push(this.selected);
+      this.selected = null;
+      this.close();
+      this.$emit("input", this.selectedItems);
+    },
+    remove(item) {
+      const index = this.selectedItems.indexOf(item);
+      if (index >= 0) {
+        this.selectedItems.splice(index, 1);
+      }
+    },
+    changeReference() {
+      this.showMultiple = !this.showMultiple;
+      this.selectedItems.splice(0, this.selectedItems.length - 1);
+      this.selected = { ...this.value };
+      // id: this.value.id,
+      // title: this.value.title
+    }
+  }
+};
+</script>
+>
+<style>
+.box-chips {
+  border-bottom: 1px solid #9e9e9e;
+}
+</style>
